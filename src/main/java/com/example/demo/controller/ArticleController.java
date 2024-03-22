@@ -6,20 +6,26 @@ import com.example.demo.repository.ArticleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 @Slf4j
 public class ArticleController {
     @Autowired
     private ArticleRepository articleRepository;
+
     @GetMapping("/articles/new")
-    public String newArticleForm(){
+    public String newArticleForm() {
         return "articles/new";
     }
+
     @PostMapping("/articles/create") // post요청 받기 위해서 이렇게
-    public String createArticle(ArticleForm form){ // 이렇게 객체를 하나 넣어줌으로서 데이터를 여기로 받아오기 가능함.
+    public String createArticle(ArticleForm form) { // 이렇게 객체를 하나 넣어줌으로서 데이터를 여기로 받아오기 가능함.
         // 자 그럼 데이터를 어떻게 매핑해주지? => 인풋 받는 곳에서 연결해줌.
         // <textarea class="form-control" rows="3" name="content"></textarea> 이렇게 써줘서 content에 mapping
         log.info(form.toString());
@@ -36,6 +42,34 @@ public class ArticleController {
     }
     // 이정도까지만 하면 받아주기만 하고 그 이후 일은 안 함.
     // 하도록 하기 위해 정보를 DTO에 받아줘야 함.
+
+    // 이제 데이터베이에서 조회를 해보겠습니다.
+    // 조회는 다음과 같은 매커니즘으로 작동합니다.
+    // url을 통해서 요청을 합니다
+    // 그럼 컨트롤러에서 요청 받아주고 리파지터리 통해서 DB 조회 요청합
+    // 그럼 데이터를 엔티티로 반환하고, 그 데이터를 뷰 템플릿에 반환한다.
+
+    // 이제 컨트롤러 만들기부터 시작
+    @GetMapping("/articles/{id}") // 이걸 통해서 그럼 요청은 받아 줄 수가 있지.
+    public String show(@PathVariable Long id, Model mOdel) { // 패스 베리어블은 url주소의 id를 받아서 오는 그런 역할
+        // 모델을 통해 데이터를 등록하지요
+        log.info("id:" + id);
+        // 받은 요청, id를 통해서 이제 리파지터리에게 조회하게 하고 받아오기 하면 됨.
+
+        Article articleEntity = articleRepository.findById(id).orElse(null); // 오류의 이유는 옵셔널 타입이기 때문이다. .orElse() 통해 지우기 가능
+        mOdel.addAttribute("article", articleEntity); // 엔티티 객체를 아티클 이라는 이름으로 등록함.
+        return "articles/show";
+    }
+    @GetMapping("/articles")
+    public String index(Model model) {
+        // 여기서 할 일
+        // 1 모든 데이터 가져오기 => 레파지터리에서 findALl하면 됨.
+        List<Article> articleEntityList = articleRepository.findAll(); // 여기서 리파지터리 이용해서 모든 정보 가져옴, d이쪽 할 때 관계성 한번 다시 생각해보기.
+        // 모델에 가져온 데이터들 등록하기
+        model.addAttribute("articleList", articleEntityList);
+        // 뷰 페이지 설정하기.
+        return "articles/index";
+    }
 }
 
 // 자자 여기서 하는 행동은 무엇이냐.
