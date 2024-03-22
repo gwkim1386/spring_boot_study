@@ -3,12 +3,14 @@ package com.example.demo.controller;
 import com.example.demo.dto.ArticleForm;
 import com.example.demo.entity.Article;
 import com.example.demo.repository.ArticleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
+@Slf4j
 public class ArticleController {
     @Autowired
     private ArticleRepository articleRepository;
@@ -20,13 +22,16 @@ public class ArticleController {
     public String createArticle(ArticleForm form){ // 이렇게 객체를 하나 넣어줌으로서 데이터를 여기로 받아오기 가능함.
         // 자 그럼 데이터를 어떻게 매핑해주지? => 인풋 받는 곳에서 연결해줌.
         // <textarea class="form-control" rows="3" name="content"></textarea> 이렇게 써줘서 content에 mapping
-        System.out.println(form.toString());
+        log.info(form.toString());
+
         // Dto를 엔티티로
         Article article = form.toEntity();
-        System.out.println(article.toString());
+        log.info(article.toString());
+        //System.out.println(article.toString());
         // 리파지터리로 엔티티를 DB에 저장.
         Article saved = articleRepository.save(article);
-        System.out.println(saved.toString());
+        //System.out.println(saved.toString());
+        log.info(saved.toString());
         return "";
     }
     // 이정도까지만 하면 받아주기만 하고 그 이후 일은 안 함.
