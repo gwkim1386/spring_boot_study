@@ -11,10 +11,11 @@
     {{#articleList}}
         <tr>
             <th>{{id}}</th>
-            <th>{{title}}</th>
+            <td><a href="/articles/{{id}}">{{title}}</a> </td>
             <th>{{content}}</th>
         </tr>
     {{/articleList}}
     </tbody>
 </table>
+<a href="/articles/new">New Article</a>
 {{>layouts/footer}}

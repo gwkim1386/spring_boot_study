@@ -38,7 +38,7 @@ public class ArticleController {
         Article saved = articleRepository.save(article);
         //System.out.println(saved.toString());
         log.info(saved.toString());
-        return "";
+        return "redirect:/articles/"+saved.getId(); // 서브밋 누르면 이제 여기로 리다이렉트 됨.
     }
     // 이정도까지만 하면 받아주기만 하고 그 이후 일은 안 함.
     // 하도록 하기 위해 정보를 DTO에 받아줘야 함.
